@@ -1,8 +1,12 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
 import logo from '../trivia.png';
 import '../App.css';
+import { login as loginAction } from '../redux/actions';
 
-export default class Login extends Component {
+class Login extends Component {
   constructor() {
     super();
     this.state = {
@@ -25,8 +29,11 @@ export default class Login extends Component {
     }
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
+    const { login } = this.props;
+    const { name, email } = this.state;
+    login(name, email);
   }
 
   handleChange({ target }) {
@@ -41,8 +48,10 @@ export default class Login extends Component {
 
   render() {
     const { name, email, isDisabled } = this.state;
+    const { logged } = this.props;
     return (
       <div className="App">
+        { logged && <Redirect to="/game" /> }
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
           <form onSubmit={ this.handleSubmit }>
@@ -68,7 +77,7 @@ export default class Login extends Component {
                 onChange={ this.handleChange }
               />
             </label>
-            <button type="button" data-testid="btn-play" disabled={ isDisabled }>
+            <button type="submit" data-testid="btn-play" disabled={ isDisabled }>
               Jogar
             </button>
           </form>
@@ -77,3 +86,18 @@ export default class Login extends Component {
     );
   }
 }
+
+Login.propTypes = {
+  logged: PropTypes.bool.isRequired,
+  login: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  logged: state.login.logged,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  login: (name, email) => dispatch(loginAction({ name, email })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
