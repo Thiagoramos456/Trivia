@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import logo from '../trivia.png';
+import '../App.css';
 
 export default class Login extends Component {
   constructor() {
@@ -40,33 +42,38 @@ export default class Login extends Component {
   render() {
     const { name, email, isDisabled } = this.state;
     return (
-      <form onSubmit={ this.handleSubmit }>
-        <label htmlFor="name">
-          Nome:
-          <input
-            data-testid="input-player-name"
-            id="name"
-            type="text"
-            name="name"
-            value={ name }
-            onChange={ this.handleChange }
-          />
-        </label>
-        <label htmlFor="email">
-          Email:
-          <input
-            data-testid="input-gravatar-email"
-            id="name"
-            type="text"
-            name="email"
-            value={ email }
-            onChange={ this.handleChange }
-          />
-        </label>
-        <button type="button" data-testid="btn-play" disabled={ isDisabled }>
-          Jogar
-        </button>
-      </form>
+      <div className="App">
+        <header className="App-header">
+          <img src={ logo } className="App-logo" alt="logo" />
+          <form onSubmit={ this.handleSubmit }>
+            <label htmlFor="name">
+              Nome:
+              <input
+                data-testid="input-player-name"
+                id="name"
+                type="text"
+                name="name"
+                value={ name }
+                onChange={ this.handleChange }
+              />
+            </label>
+            <label htmlFor="email">
+              Email:
+              <input
+                data-testid="input-gravatar-email"
+                id="name"
+                type="text"
+                name="email"
+                value={ email }
+                onChange={ this.handleChange }
+              />
+            </label>
+            <button type="button" data-testid="btn-play" disabled={ isDisabled }>
+              Jogar
+            </button>
+          </form>
+        </header>
+      </div>
     );
   }
 }
