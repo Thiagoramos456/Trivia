@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import logo from '../trivia.png';
 import '../App.css';
-import { fetchAPI, login as loginAction } from '../redux/actions';
+import { fetchToken, login as loginAction } from '../redux/actions';
 import UserInputs from '../components/UserInputs';
 
 class Login extends Component {
@@ -40,8 +40,8 @@ class Login extends Component {
     event.preventDefault();
     const { login, tokenToStore } = this.props;
     const { name, email } = this.state;
+    const token = await tokenToStore();
     login(name, email);
-    const token = await tokenToStore(fetchAPI);
     localStorage.setItem('token', JSON.stringify(token.payload.token));
   }
 
@@ -71,7 +71,7 @@ class Login extends Component {
               email={ email }
             />
             <button
-              type="submit"
+              type="button"
               data-testid="btn-play"
               disabled={ isDisabled }
               onClick={ this.handleSubmit }
@@ -104,7 +104,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   login: (name, email) => dispatch(loginAction({ name, email })),
-  tokenToStore: (token) => dispatch(fetchAPI(token)),
+  tokenToStore: () => dispatch(fetchToken()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
