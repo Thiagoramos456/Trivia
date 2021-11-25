@@ -9,13 +9,28 @@ class Game extends Component {
   constructor() {
     super();
 
-    // this.state = {  };
+    this.state = {
+      answerTimeSeconds: 30,
+      timeIsOver: false,
+    };
 
     this.getTokenFromLocalStorage = this.getTokenFromLocalStorage.bind(this);
+    this.startAnswerTimer = this.startAnswerTimer.bind(this);
+    this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
   }
 
   async componentDidMount() {
     this.getTokenFromLocalStorage();
+    this.startAnswerTimer();
+  }
+
+  componentDidUpdate() {
+    const { answerTimeSeconds } = this.state;
+    const TIME_LIMIT = -1;
+
+    if (answerTimeSeconds === TIME_LIMIT) {
+      this.stopAnswerTimer();
+    }
   }
 
   async getTokenFromLocalStorage() {
@@ -30,8 +45,26 @@ class Game extends Component {
     }
   }
 
+  startAnswerTimer() {
+    const ONE_SECOND_MILLISECONDS = 1000;
+    const ONE_SECOND = 1;
+
+    this.intervalID = setInterval(() => {
+      this.setState((prevState) => ({
+        answerTimeSeconds: prevState.answerTimeSeconds - ONE_SECOND,
+      }));
+    }, ONE_SECOND_MILLISECONDS);
+  }
+
+  stopAnswerTimer() {
+    this.setState({ answerTimeSeconds: 0, timeIsOver: true }, () => {
+      clearInterval(this.intervalID);
+    });
+  }
+
   render() {
     const { isLoading, data } = this.props;
+    const { answerTimeSeconds, timeIsOver } = this.state;
 
     return (
       <>
@@ -40,16 +73,31 @@ class Game extends Component {
           <div>
             <h1 data-testid="question-category">{data.results[0].category}</h1>
             <h2 data-testid="question-text">{data.results[0].question}</h2>
+            <h3>
+              Tempo restante:
+              {' '}
+              { answerTimeSeconds }
+              {' '}
+              segundos
+            </h3>
             <ol>
               {data.results[0].incorrect_answers.map((answer, index) => (
                 <li key={ index }>
-                  <button data-testid={ `wrong-answer-${index}` } type="button">
+                  <button
+                    disabled={ timeIsOver }
+                    data-testid={ `wrong-answer-${index}` }
+                    type="button"
+                  >
                     {answer}
                   </button>
                 </li>
               ))}
               <li>
-                <button type="button" data-testid="correct-answer">
+                <button
+                  disabled={ timeIsOver }
+                  type="button"
+                  data-testid="correct-answer"
+                >
                   {data.results[0].correct_answer}
                 </button>
               </li>
