@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import logo from '../trivia.png';
 import '../App.css';
-import { fetchAPI, login as loginAction } from '../redux/actions';
+import { fetchToken, login as loginAction } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -33,8 +33,9 @@ class Login extends Component {
     event.preventDefault();
     const { login, tokenToStore } = this.props;
     const { name, email } = this.state;
+    const token = await tokenToStore();
     login(name, email);
-    const token = await tokenToStore(fetchAPI);
+    // console.log('toke', token);
     localStorage.setItem('token', JSON.stringify(token.payload.token));
   }
 
@@ -56,7 +57,7 @@ class Login extends Component {
         {logged && <Redirect to="/game" />}
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
-          <form onSubmit={ this.handleSubmit }>
+          <form>
             <label htmlFor="name">
               Nome:
               <input
@@ -80,7 +81,7 @@ class Login extends Component {
               />
             </label>
             <button
-              type="submit"
+              type="button"
               data-testid="btn-play"
               disabled={ isDisabled }
               onClick={ this.handleSubmit }
@@ -106,7 +107,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   login: (name, email) => dispatch(loginAction({ name, email })),
-  tokenToStore: (token) => dispatch(fetchAPI(token)),
+  tokenToStore: () => dispatch(fetchToken()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
