@@ -4,7 +4,7 @@ export default class Config extends Component {
   render() {
     return (
       <div>
-        <h1 data-testid="settings-title">Configuração</h1>
+        <h1 data-testid="settings-title">Configurações</h1>
       </div>
     );
   }
