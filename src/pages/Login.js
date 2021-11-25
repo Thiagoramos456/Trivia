@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import logo from '../trivia.png';
 import '../App.css';
-import { login as loginAction } from '../redux/actions';
+import { fetchApi, login as loginAction } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -31,9 +31,11 @@ class Login extends Component {
 
   async handleSubmit(event) {
     event.preventDefault();
-    const { login } = this.props;
+    const { login, tokenToStore } = this.props;
     const { name, email } = this.state;
     login(name, email);
+    const token = await tokenToStore(fetchApi);
+    localStorage.setItem('token', JSON.stringify(token));
   }
 
   handleChange({ target }) {
@@ -51,7 +53,7 @@ class Login extends Component {
     const { logged } = this.props;
     return (
       <div className="App">
-        { logged && <Redirect to="/game" /> }
+        {logged && <Redirect to="/game" />}
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
           <form onSubmit={ this.handleSubmit }>
@@ -77,7 +79,12 @@ class Login extends Component {
                 onChange={ this.handleChange }
               />
             </label>
-            <button type="submit" data-testid="btn-play" disabled={ isDisabled }>
+            <button
+              type="submit"
+              data-testid="btn-play"
+              disabled={ isDisabled }
+              onClick={ this.handleSubmit }
+            >
               Jogar
             </button>
           </form>
@@ -90,6 +97,7 @@ class Login extends Component {
 Login.propTypes = {
   logged: PropTypes.bool.isRequired,
   login: PropTypes.func.isRequired,
+  tokenToStore: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -98,6 +106,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   login: (name, email) => dispatch(loginAction({ name, email })),
+  tokenToStore: (token) => dispatch(fetchApi(token)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
