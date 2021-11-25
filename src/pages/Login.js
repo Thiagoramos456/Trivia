@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import logo from '../trivia.png';
 import '../App.css';
-import { fetchApi, login as loginAction } from '../redux/actions';
+import { fetchAPI, login as loginAction } from '../redux/actions';
 
 class Login extends Component {
   constructor() {
@@ -34,8 +34,8 @@ class Login extends Component {
     const { login, tokenToStore } = this.props;
     const { name, email } = this.state;
     login(name, email);
-    const token = await tokenToStore(fetchApi);
-    localStorage.setItem('token', JSON.stringify(token));
+    const token = await tokenToStore(fetchAPI);
+    localStorage.setItem('token', JSON.stringify(token.payload.token));
   }
 
   handleChange({ target }) {
@@ -106,7 +106,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   login: (name, email) => dispatch(loginAction({ name, email })),
-  tokenToStore: (token) => dispatch(fetchApi(token)),
+  tokenToStore: (token) => dispatch(fetchAPI(token)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);
