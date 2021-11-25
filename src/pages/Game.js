@@ -11,21 +11,21 @@ class Game extends Component {
 
     // this.state = {  };
 
-    this.getTokenFromLocalStorage = this.getTokenFromLocalStorage.bind(this);
+    this.getTokenFromStateOrLS = this.getTokenFromStateOrLS.bind(this);
   }
 
   async componentDidMount() {
-    this.getTokenFromLocalStorage();
+    this.getTokenFromStateOrLS();
   }
 
-  async getTokenFromLocalStorage() {
+  async getTokenFromStateOrLS() {
     const { fetchAPIAction } = this.props;
     const { token } = this.props;
     if (token) {
       fetchAPIAction(token);
     } else {
-      const tokenFromLS = (key) => JSON.parse(localStorage.getItem(key));
-      const tokenLS = tokenFromLS('token');
+      const tokenFromLocalStorage = (key) => JSON.parse(localStorage.getItem(key));
+      const tokenLS = tokenFromLocalStorage('token');
       fetchAPIAction(tokenLS);
     }
   }

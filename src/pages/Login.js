@@ -64,7 +64,7 @@ class Login extends Component {
         { redirectToConfig && <Redirect to="/config" />}
         <header className="App-header">
           <img src={ logo } className="App-logo" alt="logo" />
-          <form onSubmit={ this.handleSubmit }>
+          <form>
             <UserInputs
               name={ name }
               handleChange={ this.handleChange }
