@@ -170,8 +170,7 @@ class Game extends Component {
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
               />}
-          </div>
-        )}
+          </div>)}
         {isLoading && <Loading />}
       </>
     );
