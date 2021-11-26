@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { fetchAPI } from '../redux/actions';
@@ -9,9 +10,12 @@ class Game extends Component {
   constructor() {
     super();
 
-    // this.state = {  };
+    this.state = {
+      redirectToFeedback: false,
+    };
 
     this.getTokenFromLocalStorage = this.getTokenFromLocalStorage.bind(this);
+    this.redirectToFeedback = this.redirectToFeedback.bind(this);
   }
 
   async componentDidMount() {
@@ -30,13 +34,23 @@ class Game extends Component {
     }
   }
 
+  redirectToFeedback() {
+    this.setState({ redirectToFeedback: true });
+  }
+
   render() {
+    const { redirectToFeedback } = this.state;
     const { isLoading, data } = this.props;
+    console.log(data);
 
     return (
       <>
         <Header />
-        { data.results && (
+        {redirectToFeedback && <Redirect to="/feedback" />}
+        <button type="button" onClick={ this.redirectToFeedback }>
+          Feedback
+        </button>
+        {data.results && (
           <div>
             <h1 data-testid="question-category">{data.results[0].category}</h1>
             <h2 data-testid="question-text">{data.results[0].question}</h2>
