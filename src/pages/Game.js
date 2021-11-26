@@ -21,6 +21,8 @@ class Game extends Component {
     this.getTokenFromStateOrLS = this.getTokenFromStateOrLS.bind(this);
     this.startAnswerTimer = this.startAnswerTimer.bind(this);
     this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
+    this.goToNextQuestion = this.goToNextQuestion.bind(this);
+    this.enableNextQuestionButton = this.enableNextQuestionButton.bind(this);
   }
 
   async componentDidMount() {
@@ -65,10 +67,13 @@ class Game extends Component {
     if (difficulty === 'easy') return POINTS_EASY;
   }
 
+  enableNextQuestionButton() {
+    this.setState({ showNextButton: true });
+  }
+
   goToNextQuestion() {
     this.setState((prevState) => ({
       qIndex: prevState.qIndex + 1,
-      showNextButton: true,
     }));
   }
 
@@ -91,7 +96,7 @@ class Game extends Component {
 
     localStorage.setItem('state', JSON.stringify(state));
     updatePlayerInfo(updatedPlayer);
-    console.log(updatePlayerInfo);
+    this.enableNextQuestionButton();
   }
 
   startAnswerTimer() {
@@ -113,7 +118,7 @@ class Game extends Component {
 
   render() {
     const { isLoading, results } = this.props;
-    const { answerTimeSeconds, timeIsOver, /* showNextButton, */ qIndex } = this.state;
+    const { answerTimeSeconds, timeIsOver, showNextButton, qIndex } = this.state;
 
     return (
       <>
@@ -135,6 +140,7 @@ class Game extends Component {
                     disabled={ timeIsOver }
                     testId={ `wrong-answer-${index}` }
                     text={ answer }
+                    onClick={ () => this.enableNextQuestionButton(this.props) }
                   />
                 </li>
               ))}
@@ -147,12 +153,12 @@ class Game extends Component {
                 />
               </li>
             </ol>
-            {/* {showNextButton
+            {showNextButton
               && <Buttons
                 testId="btn-next"
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
-              />} */}
+              />}
           </div>
         )}
         {isLoading && <Loading />}
