@@ -72,9 +72,16 @@ class Game extends Component {
   }
 
   goToNextQuestion() {
-    this.setState((prevState) => ({
-      qIndex: prevState.qIndex + 1,
-    }));
+    const { qIndex } = this.state;
+    const { history } = this.props;
+    const MAX_QUESTION_NUMBER = 5;
+    if (qIndex < MAX_QUESTION_NUMBER - 1) {
+      return this.setState((prevState) => ({
+        qIndex: prevState.qIndex + 1,
+        answerTimeSeconds: 30,
+      }));
+    }
+    history.push('/feedback');
   }
 
   rightAnswer({ results }) {
@@ -175,6 +182,7 @@ Game.propTypes = {
   updatePlayerInfo: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   login: PropTypes.objectOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = (state) => ({
