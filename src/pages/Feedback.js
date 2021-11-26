@@ -1,5 +1,7 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Header from '../components/Header';
+import RankingButton from '../components/RankingButton';
 
 export default class Feedback extends Component {
   constructor() {
@@ -15,6 +17,7 @@ export default class Feedback extends Component {
   }
 
   render() {
+    const { history } = this.props;
     return (
       <div>
         <Header />
@@ -22,8 +25,13 @@ export default class Feedback extends Component {
           {' '}
           {this.getFeedbackMessage()}
           {' '}
+          <RankingButton history={ history } />
         </h2>
       </div>
     );
   }
 }
+
+Feedback.propTypes = {
+  history: PropTypes.shape(PropTypes.object).isRequired,
+};
