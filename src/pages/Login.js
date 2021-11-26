@@ -78,6 +78,7 @@ class Login extends Component {
             >
               Login
             </button>
+            <br />
             <button
               type="button"
               data-testid="btn-settings"

@@ -17,6 +17,7 @@ class Game extends Component {
     this.getTokenFromLocalStorage = this.getTokenFromLocalStorage.bind(this);
     this.startAnswerTimer = this.startAnswerTimer.bind(this);
     this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
+    this.answerQuestion = this.answerQuestion.bind(this);
   }
 
   async componentDidMount() {
@@ -62,6 +63,11 @@ class Game extends Component {
     });
   }
 
+  answerQuestion() {
+    console.log('clicou');
+    this.setState({ timeIsOver: true });
+  }
+
   render() {
     const { isLoading, data } = this.props;
     const { answerTimeSeconds, timeIsOver } = this.state;
@@ -87,6 +93,8 @@ class Game extends Component {
                     disabled={ timeIsOver }
                     data-testid={ `wrong-answer-${index}` }
                     type="button"
+                    onClick={ this.answerQuestion }
+                    style={ { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
                   >
                     {answer}
                   </button>
@@ -97,6 +105,8 @@ class Game extends Component {
                   disabled={ timeIsOver }
                   type="button"
                   data-testid="correct-answer"
+                  onClick={ this.answerQuestion }
+                  style={ { border: timeIsOver && '3px solid rgb(6, 240, 15)' } }
                 >
                   {data.results[0].correct_answer}
                 </button>
