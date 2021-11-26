@@ -1,8 +1,14 @@
-import { FETCH_API_SUCCESS, FETCH_API_FAILED, LOADING } from '../actions';
+import { FETCH_API_SUCCESS, FETCH_API_FAILED, LOADING, PLAYER } from '../actions';
 
 const INITIAL_STATE = {
   data: {},
   error: {},
+  player: {
+    name: '',
+    assertions: 0,
+    score: 0,
+    gravatarEmail: '',
+  },
   isLoading: false,
 };
 
@@ -25,6 +31,12 @@ const gameDataReducer = (state = INITIAL_STATE, action) => {
       ...state,
       error: action.payload,
       isLoading: false,
+    };
+
+  case PLAYER:
+    return {
+      ...state,
+      player: action.payload,
     };
 
   default:
