@@ -3,6 +3,7 @@ export const FETCH_TOKEN = 'FETCH_TOKEN';
 export const FETCH_API_SUCCESS = 'FETCH_API_SUCCESS';
 export const FETCH_API_FAILED = 'FETCH_API_FAILED';
 export const LOADING = 'LOADING';
+export const PLAYER = 'PLAYER';
 
 export const login = (payload) => ({
   type: LOGIN,
@@ -26,6 +27,11 @@ export const failedAPIFetch = (payload) => ({
 
 export const loading = (payload) => ({
   type: LOADING,
+  payload,
+});
+
+export const player = (payload) => ({
+  type: PLAYER,
   payload,
 });
 

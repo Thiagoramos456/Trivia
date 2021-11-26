@@ -1,73 +1,175 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import { fetchAPI } from '../redux/actions';
+import { player as playerAction, fetchAPI } from '../redux/actions';
+import createInitialLocalStorage from '../helpers/createLocalStorage';
+import Buttons from '../components/Buttons';
 
 class Game extends Component {
   constructor() {
     super();
 
     this.state = {
-      redirectToFeedback: false,
+      answerTimeSeconds: 30,
+      timeIsOver: false,
+      showNextButton: false,
+      qIndex: 0,
     };
 
-    this.getTokenFromLocalStorage = this.getTokenFromLocalStorage.bind(this);
-    this.redirectToFeedback = this.redirectToFeedback.bind(this);
+    this.getTokenFromStateOrLS = this.getTokenFromStateOrLS.bind(this);
+    this.startAnswerTimer = this.startAnswerTimer.bind(this);
+    this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
+    this.goToNextQuestion = this.goToNextQuestion.bind(this);
+    this.enableNextQuestionButton = this.enableNextQuestionButton.bind(this);
   }
 
   async componentDidMount() {
-    this.getTokenFromLocalStorage();
+    this.getTokenFromStateOrLS();
+    this.startAnswerTimer();
+    createInitialLocalStorage(this.props);
   }
 
-  async getTokenFromLocalStorage() {
+  componentDidUpdate() {
+    const { answerTimeSeconds } = this.state;
+    const TIME_LIMIT = -1;
+
+    if (answerTimeSeconds === TIME_LIMIT) {
+      this.stopAnswerTimer();
+    }
+  }
+
+  async getTokenFromStateOrLS() {
     const { fetchAPIAction } = this.props;
     const { token } = this.props;
     if (token) {
       fetchAPIAction(token);
     } else {
-      const tokenFromLS = (key) => JSON.parse(localStorage.getItem(key));
-      const tokenLS = tokenFromLS('token');
+      const tokenFromLocalStorage = (key) => JSON.parse(localStorage.getItem(key));
+      const tokenLS = tokenFromLocalStorage('token');
       fetchAPIAction(tokenLS);
     }
   }
 
-  redirectToFeedback() {
-    this.setState({ redirectToFeedback: true });
+  getCleanText(text) {
+    const innerHTML = { __html: text };
+    return innerHTML;
+  }
+
+  getDifficultyValue({ difficulty }) {
+    const POINTS_HARD = 3;
+    const POINTS_MEDIUM = 3;
+    const POINTS_EASY = 3;
+
+    if (difficulty === 'hard') return POINTS_HARD;
+    if (difficulty === 'medium') return POINTS_MEDIUM;
+    if (difficulty === 'easy') return POINTS_EASY;
+  }
+
+  enableNextQuestionButton() {
+    this.setState({ showNextButton: true });
+    this.setState({ timeIsOver: true });
+  }
+
+  goToNextQuestion() {
+    const { qIndex } = this.state;
+    const { history } = this.props;
+    const MAX_QUESTION_NUMBER = 4;
+    if (qIndex < MAX_QUESTION_NUMBER) {
+      return this.setState((prevState) => ({
+        qIndex: prevState.qIndex + 1,
+        answerTimeSeconds: 30,
+        timeIsOver: false,
+      }));
+    }
+    history.push('/feedback');
+  }
+
+  rightAnswer({ results }) {
+    const { answerTimeSeconds } = this.state;
+    const { login: { name, email: gravatarEmail } } = this.props;
+    const { updatePlayerInfo, player } = this.props;
+    const BASE_VALUE = 10;
+    const difficultyValue = this.getDifficultyValue(results[0]);
+    const score = BASE_VALUE + answerTimeSeconds * difficultyValue;
+
+    const updatedPlayer = {
+      name,
+      assertions: player.assertions + 1,
+      score: player.score + score,
+      gravatarEmail,
+    };
+
+    const state = { player: updatedPlayer };
+
+    localStorage.setItem('state', JSON.stringify(state));
+    updatePlayerInfo(updatedPlayer);
+    this.enableNextQuestionButton();
+    this.setState({ timeIsOver: true });
+  }
+
+  startAnswerTimer() {
+    const ONE_SECOND_MILLISECONDS = 1000;
+    const ONE_SECOND = 1;
+
+    this.intervalID = setInterval(() => {
+      this.setState((prevState) => ({
+        answerTimeSeconds: prevState.answerTimeSeconds - ONE_SECOND,
+      }));
+    }, ONE_SECOND_MILLISECONDS);
+  }
+
+  stopAnswerTimer() {
+    this.setState({ answerTimeSeconds: 0, timeIsOver: true }, () => {
+      clearInterval(this.intervalID);
+    });
   }
 
   render() {
-    const { redirectToFeedback } = this.state;
-    const { isLoading, data } = this.props;
-    console.log(data);
-
+    const { isLoading, results } = this.props;
+    const { answerTimeSeconds, timeIsOver, showNextButton, qIndex } = this.state;
     return (
       <>
         <Header />
-        {redirectToFeedback && <Redirect to="/feedback" />}
-        <button type="button" onClick={ this.redirectToFeedback }>
-          Feedback
-        </button>
-        {data.results && (
+        { results && (
           <div>
-            <h1 data-testid="question-category">{data.results[0].category}</h1>
-            <h2 data-testid="question-text">{data.results[0].question}</h2>
+            <h1 data-testid="question-category">{results[qIndex].category}</h1>
+            <h2
+              data-testid="question-text"
+              dangerouslySetInnerHTML={ this.getCleanText(results[qIndex].question) }
+            />
+            <h3>
+              {`Tempo restante: ${answerTimeSeconds} segundos`}
+            </h3>
             <ol>
-              {data.results[0].incorrect_answers.map((answer, index) => (
+              {results[qIndex].incorrect_answers.map((answer, index) => (
                 <li key={ index }>
-                  <button data-testid={ `wrong-answer-${index}` } type="button">
-                    {answer}
-                  </button>
+                  <Buttons
+                    disabled={ timeIsOver }
+                    testId={ `wrong-answer-${index}` }
+                    text={ answer }
+                    onClick={ () => this.enableNextQuestionButton(this.props) }
+                    style={ { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
+                  />
                 </li>
               ))}
               <li>
-                <button type="button" data-testid="correct-answer">
-                  {data.results[0].correct_answer}
-                </button>
+                <Buttons
+                  disabled={ timeIsOver }
+                  testId="correct-answer"
+                  text={ results[qIndex].correct_answer }
+                  onClick={ () => this.rightAnswer(this.props) }
+                  style={ { border: timeIsOver && '3px solid rgb(6, 240, 15)' } }
+                />
               </li>
             </ol>
+            {showNextButton
+              && <Buttons
+                testId="btn-next"
+                text="Próxima"
+                onClick={ this.goToNextQuestion }
+              />}
           </div>
         )}
         {isLoading && <Loading />}
@@ -77,22 +179,27 @@ class Game extends Component {
 }
 
 Game.propTypes = {
-  data: PropTypes.objectOf({
-    results: PropTypes.objectOf(PropTypes.object).isRequired,
-  }).isRequired,
+  results: PropTypes.objectOf(PropTypes.object).isRequired,
   fetchAPIAction: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
+  player: PropTypes.objectOf(PropTypes.object).isRequired,
+  updatePlayerInfo: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
+  login: PropTypes.objectOf(PropTypes.object).isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = (state) => ({
+  login: state.login,
   isLoading: state.gameData.isLoading,
   token: state.tokenReducer.token.token,
-  data: state.gameData.data,
+  results: state.gameData.data.results,
+  player: state.gameData.player,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchAPIAction: (token) => dispatch(fetchAPI(token)),
+  updatePlayerInfo: (player) => dispatch(playerAction(player)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
