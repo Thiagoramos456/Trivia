@@ -23,7 +23,6 @@ class Game extends Component {
     this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
     this.goToNextQuestion = this.goToNextQuestion.bind(this);
     this.enableNextQuestionButton = this.enableNextQuestionButton.bind(this);
-    this.answerQuestion = this.answerQuestion.bind(this);
   }
 
   async componentDidMount() {
@@ -76,11 +75,12 @@ class Game extends Component {
   goToNextQuestion() {
     const { qIndex } = this.state;
     const { history } = this.props;
-    const MAX_QUESTION_NUMBER = 5;
-    if (qIndex < MAX_QUESTION_NUMBER - 1) {
+    const MAX_QUESTION_NUMBER = 4;
+    if (qIndex < MAX_QUESTION_NUMBER) {
       return this.setState((prevState) => ({
         qIndex: prevState.qIndex + 1,
         answerTimeSeconds: 30,
+        timeIsOver: false,
       }));
     }
     history.push('/feedback');
@@ -129,7 +129,6 @@ class Game extends Component {
   render() {
     const { isLoading, results } = this.props;
     const { answerTimeSeconds, timeIsOver, showNextButton, qIndex } = this.state;
-
     return (
       <>
         <Header />
