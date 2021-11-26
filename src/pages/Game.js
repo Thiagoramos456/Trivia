@@ -23,6 +23,7 @@ class Game extends Component {
     this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
     this.goToNextQuestion = this.goToNextQuestion.bind(this);
     this.enableNextQuestionButton = this.enableNextQuestionButton.bind(this);
+    this.answerQuestion = this.answerQuestion.bind(this);
   }
 
   async componentDidMount() {
@@ -69,6 +70,7 @@ class Game extends Component {
 
   enableNextQuestionButton() {
     this.setState({ showNextButton: true });
+    this.setState({ timeIsOver: true });
   }
 
   goToNextQuestion() {
@@ -104,6 +106,7 @@ class Game extends Component {
     localStorage.setItem('state', JSON.stringify(state));
     updatePlayerInfo(updatedPlayer);
     this.enableNextQuestionButton();
+    this.setState({ timeIsOver: true });
   }
 
   startAnswerTimer() {
@@ -148,6 +151,7 @@ class Game extends Component {
                     testId={ `wrong-answer-${index}` }
                     text={ answer }
                     onClick={ () => this.enableNextQuestionButton(this.props) }
+                    style={ { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
                   />
                 </li>
               ))}
@@ -157,6 +161,7 @@ class Game extends Component {
                   testId="correct-answer"
                   text={ results[qIndex].correct_answer }
                   onClick={ () => this.rightAnswer(this.props) }
+                  style={ { border: timeIsOver && '3px solid rgb(6, 240, 15)' } }
                 />
               </li>
             </ol>
