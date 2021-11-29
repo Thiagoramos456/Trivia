@@ -14,16 +14,25 @@ export default function createInitialLocalStorage(props) {
     };
     localStorage.setItem('state', JSON.stringify(initialStateInLS));
   }
+}
 
-  const prevRankingInLS = localStorage.getItem('Ranking');
+export function createRankingInLocalStore(login, score) {
+  const prevRankingInLS = JSON.parse(localStorage.getItem('ranking'));
+  const { name, gravatarImage } = login;
+  const currentPlayer = {
+    name,
+    score,
+    picture: gravatarImage,
+  };
+
+  console.log('prevRank é:', prevRankingInLS);
+
   if (!prevRankingInLS) {
-    const { player, login: { name, gravatarImage } } = props;
-
-    const initialRankingInLS = [{
-      name,
-      score: player.score,
-      picture: gravatarImage,
-    }];
+    const initialRankingInLS = [currentPlayer];
     localStorage.setItem('ranking', JSON.stringify(initialRankingInLS));
+  } else {
+    const allPlayers = [...prevRankingInLS, currentPlayer];
+    // const allPlayers = prevRankingInLS.push(currentPlayer);
+    localStorage.setItem('ranking', JSON.stringify(allPlayers));
   }
 }

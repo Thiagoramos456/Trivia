@@ -14,6 +14,8 @@ class Ranking extends React.Component {
     if (ranking.length > 0) {
       ranking.sort((a, b) => b.score - a.score);
     }
+    console.log(ranking);
+    // console.log('aaaaaaaaaaa', Object.entries(ranking));
     return ranking;
   }
 
@@ -23,7 +25,7 @@ class Ranking extends React.Component {
         <span>
           <img
             data-testid={ `player-image-${index}` }
-            src={ player.image }
+            src={ player.picture }
             alt={ player.name }
           />
         </span>
@@ -34,12 +36,15 @@ class Ranking extends React.Component {
   }
 
   render() {
+    const state = this.orderRanking();
     return (
       <>
         <h1 data-testid="ranking-title">Ranking</h1>
-        <ul>{this.handleRanking(this.orderRanking())}</ul>
-        <Link to="/" data-testid="btn-go-home">
-          <p>Home</p>
+        <ul>{this.handleRanking(state)}</ul>
+        <Link to="/">
+          <button type="button" data-testid="btn-go-home">
+            Home
+          </button>
         </Link>
       </>
     );

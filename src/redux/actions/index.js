@@ -5,9 +5,14 @@ export const FETCH_API_FAILED = 'FETCH_API_FAILED';
 export const LOADING = 'LOADING';
 export const PLAYER = 'PLAYER';
 export const RESET_STATE = 'RESET_STATE';
+export const RESET_PLAYER = 'RESET_PLAYER';
 
 export const resetState = () => ({
   type: RESET_STATE,
+});
+
+export const resetGameData = () => ({
+  type: RESET_PLAYER,
 });
 
 export const login = (payload) => ({
