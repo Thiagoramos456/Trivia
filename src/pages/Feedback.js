@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import Header from '../components/Header';
-import RankingButton from '../components/RankingButton';
+import RedirectButton from '../components/RedirectButton';
 
 export default class Feedback extends Component {
   constructor() {
@@ -37,7 +37,6 @@ export default class Feedback extends Component {
           {' '}
           {this.getFeedbackMessage()}
           {' '}
-          <RankingButton history={ history } />
         </h2>
         <h2 data-testid="feedback-total-score">{`${this.getScore()}`}</h2>
         <h2
@@ -45,6 +44,19 @@ export default class Feedback extends Component {
         >
           {`${this.getAssertions()}`}
         </h2>
+        <RedirectButton
+          history={ history }
+          name="Ver Ranking"
+          testId="btn-ranking"
+          url="/ranking"
+        />
+        <RedirectButton
+          history={ history }
+          name="Jogar novamente"
+          testId="btn-play-again"
+          url="/"
+        />
+
       </div>
     );
   }
