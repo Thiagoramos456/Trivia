@@ -4,6 +4,11 @@ export const FETCH_API_SUCCESS = 'FETCH_API_SUCCESS';
 export const FETCH_API_FAILED = 'FETCH_API_FAILED';
 export const LOADING = 'LOADING';
 export const PLAYER = 'PLAYER';
+export const RESET_STATE = 'RESET_STATE';
+
+export const resetState = () => ({
+  type: RESET_STATE,
+});
 
 export const login = (payload) => ({
   type: LOGIN,
