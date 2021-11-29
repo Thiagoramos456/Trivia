@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { resetState } from '../redux/actions';
+import { resetGameData, resetState } from '../redux/actions';
 
 class RedirectButton extends Component {
   constructor() {
@@ -10,10 +10,9 @@ class RedirectButton extends Component {
   }
 
   goToNextQuestion(history) {
-    const { url, reset } = this.props;
-    if (url === '/') {
-      reset();
-    }
+    const { url, reset, resetPlayer } = this.props;
+    reset();
+    resetPlayer();
     history.push(url);
   }
 
@@ -39,10 +38,12 @@ RedirectButton.propTypes = {
   testId: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   reset: PropTypes.func.isRequired,
+  resetPlayer: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = (dispatch) => ({
   reset: (state) => dispatch(resetState(state)),
+  resetPlayer: (state) => dispatch(resetGameData(state)),
 });
 
 export default connect(null, mapDispatchToProps)(RedirectButton);

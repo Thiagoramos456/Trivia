@@ -1,4 +1,5 @@
-import { FETCH_API_SUCCESS, FETCH_API_FAILED, LOADING, PLAYER } from '../actions';
+import { FETCH_API_SUCCESS, FETCH_API_FAILED, LOADING,
+  PLAYER, RESET_PLAYER } from '../actions';
 
 const INITIAL_STATE = {
   data: {},
@@ -37,6 +38,17 @@ const gameDataReducer = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       player: action.payload,
+    };
+
+  case RESET_PLAYER:
+    return {
+      ...state,
+      player: {
+        name: '',
+        assertions: 0,
+        score: 0,
+        gravatarEmail: '',
+      },
     };
 
   default:

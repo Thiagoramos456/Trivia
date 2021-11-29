@@ -1,15 +1,22 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Header from '../components/Header';
 import RedirectButton from '../components/RedirectButton';
+import { createRankingInLocalStore } from '../helpers/createLocalStorage';
 
-export default class Feedback extends Component {
+class Feedback extends Component {
   constructor() {
     super();
 
     this.getFeedbackMessage = this.getFeedbackMessage.bind(this);
     this.getScore = this.getScore.bind(this);
     this.getAssertions = this.getAssertions.bind(this);
+  }
+
+  componentDidMount() {
+    const { login, score } = this.props;
+    createRankingInLocalStore(login, score);
   }
 
   getScore() {
@@ -62,6 +69,15 @@ export default class Feedback extends Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  login: state.login,
+  score: state.gameData.player.score,
+});
+
 Feedback.propTypes = {
   history: PropTypes.shape(PropTypes.object).isRequired,
+  login: PropTypes.objectOf(PropTypes.object).isRequired,
+  score: PropTypes.number.isRequired,
 };
+
+export default connect(mapStateToProps)(Feedback);
