@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 class Header extends Component {
   checkPathname(history) {
@@ -14,15 +15,23 @@ class Header extends Component {
   render() {
     const { name, score, gravatarImage, history } = this.props;
     return (
-      <header>
-        <img
-          data-testid="header-profile-picture"
-          src={ gravatarImage }
-          alt="Player Gravatar"
-        />
-        <h2 data-testid="header-player-name">{ name }</h2>
+      <header
+        className="container d-flex justify-content-between align-items-center py-3"
+      >
+        <div className="d-flex flex-direction-row align-items-center">
+          <img
+            className="rounded-circle me-2"
+            data-testid="header-profile-picture"
+            src={ gravatarImage }
+            alt="Player Gravatar"
+          />
+          <h2 className="navbar-text" data-testid="header-player-name">{ name }</h2>
+        </div>
+
         { this.checkPathname(history) ? ''
-          : <h2 data-testid="header-score">{ score }</h2>}
+          : <h2 data-testid="navbar-text">{ `Score: ${score}` }</h2>}
+
+        <Link className="navbar-brand text-danger h1" to="/">Sair</Link>
       </header>
     );
   }

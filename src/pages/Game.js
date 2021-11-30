@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -144,16 +145,17 @@ class Game extends Component {
       <>
         <Header />
         { data.length && (
-          <div>
+          <div className="container mt-5">
             <h1 data-testid="question-category">{data[qIndex].category}</h1>
             <h2
               data-testid="question-text"
+              className="text-center"
               dangerouslySetInnerHTML={ this.getCleanText(data[qIndex].question) }
             />
-            <h3>
+            <h3 className="my-4 text-center">
               {`Tempo restante: ${answerTimeSeconds} segundos`}
             </h3>
-            <ol>
+            <ol className="list-group list-unstyled">
               {data[qIndex].shuffledAnswers.map(({ correct, id, name }) => (
                 <li key={ id }>
                   <Buttons
@@ -175,6 +177,7 @@ class Game extends Component {
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
               />}
+            <h4 className="text-center mt-5" data-testid="question-category">{data[qIndex].category}</h4>
           </div>)}
         {isLoading && <Loading />}
       </>
