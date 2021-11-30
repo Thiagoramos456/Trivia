@@ -25,8 +25,6 @@ export function createRankingInLocalStore(login, score) {
     picture: gravatarImage,
   };
 
-  console.log('prevRank é:', prevRankingInLS);
-
   if (!prevRankingInLS) {
     const initialRankingInLS = [currentPlayer];
     localStorage.setItem('ranking', JSON.stringify(initialRankingInLS));

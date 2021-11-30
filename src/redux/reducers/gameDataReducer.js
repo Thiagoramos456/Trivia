@@ -2,7 +2,7 @@ import { FETCH_API_SUCCESS, FETCH_API_FAILED, LOADING,
   PLAYER, RESET_PLAYER } from '../actions';
 
 const INITIAL_STATE = {
-  data: {},
+  data: [],
   error: {},
   player: {
     name: '',
