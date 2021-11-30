@@ -9,6 +9,7 @@ export default class UserInputs extends Component {
         <label htmlFor="name">
           Nome:
           <input
+            className="form-control mt-1 input-login"
             data-testid="input-player-name"
             id="name"
             type="text"
@@ -17,9 +18,11 @@ export default class UserInputs extends Component {
             onChange={ handleChange }
           />
         </label>
-        <label htmlFor="email">
+        <br />
+        <label htmlFor="email" className="mt-3">
           Email:
           <input
+            className="form-control mt-1 input-login"
             data-testid="input-gravatar-email"
             id="name"
             type="text"
