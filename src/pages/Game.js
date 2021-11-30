@@ -177,7 +177,9 @@ class Game extends Component {
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
               />}
-            <h4 className="text-center mt-5" data-testid="question-category">{data[qIndex].category}</h4>
+            <h4 className="text-center mt-5" data-testid="question-category">
+              {data[qIndex].category}
+            </h4>
           </div>)}
         {isLoading && <Loading />}
       </>
