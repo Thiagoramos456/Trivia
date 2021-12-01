@@ -20,7 +20,11 @@ class Ranking extends React.Component {
 
   handleRanking(ranking) {
     return ranking.map((player, index) => (
-      <li key={ index }>
+      <li
+        className="list-group-item d-flex justify-content-between
+        align-items-center rank-item"
+        key={ index }
+      >
         <span>
           <img
             data-testid={ `player-image-${index}` }
@@ -29,7 +33,12 @@ class Ranking extends React.Component {
           />
         </span>
         <span data-testid={ `player-name-${index}` }>{player.name}</span>
-        <span data-testid={ `player-score-${index}` }>{player.score}</span>
+        <span
+          className="badge-primary badge-pill"
+          data-testid={ `player-score-${index}` }
+        >
+          {player.score}
+        </span>
       </li>
     ));
   }
@@ -37,15 +46,23 @@ class Ranking extends React.Component {
   render() {
     const state = this.orderRanking();
     return (
-      <>
-        <h1 data-testid="ranking-title">Ranking</h1>
-        <ul>{this.handleRanking(state)}</ul>
+      <div className="ranking-div">
+        <h1 className="text-center" data-testid="ranking-title">Ranking</h1>
+        <ul
+          className="list-group d-flex mx-auto container rank-ul"
+        >
+          {this.handleRanking(state)}
+        </ul>
         <Link to="/">
-          <button type="button" data-testid="btn-go-home">
+          <button
+            className="btn btn-dark btn-go-home"
+            type="button"
+            data-testid="btn-go-home"
+          >
             Home
           </button>
         </Link>
-      </>
+      </div>
     );
   }
 }

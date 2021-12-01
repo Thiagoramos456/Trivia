@@ -63,29 +63,37 @@ class Login extends Component {
         {logged && <Redirect to="/game" />}
         { redirectToConfig && <Redirect to="/config" />}
         <header className="App-header">
-          <img src={ logo } className="App-logo" alt="logo" />
-          <form>
+          <img
+            src={ logo }
+            className="App-logo mb-5"
+            alt="logo"
+          />
+
+          <form className="form form-control form-login">
             <UserInputs
               name={ name }
               handleChange={ this.handleChange }
               email={ email }
             />
-            <button
-              type="button"
-              data-testid="btn-play"
-              disabled={ isDisabled }
-              onClick={ this.handleSubmit }
-            >
-              Login
-            </button>
-            <br />
-            <button
-              type="button"
-              data-testid="btn-settings"
-              onClick={ this.redirectToConfig }
-            >
-              Configuração
-            </button>
+            <div className="form-position-buttons">
+              <button
+                className="btn btn-success bnt-login"
+                type="button"
+                data-testid="btn-play"
+                disabled={ isDisabled }
+                onClick={ this.handleSubmit }
+              >
+                Login
+              </button>
+              <button
+                className="btn btn-danger bnt-login"
+                type="button"
+                data-testid="btn-settings"
+                onClick={ this.redirectToConfig }
+              >
+                Configuração
+              </button>
+            </div>
           </form>
         </header>
       </div>

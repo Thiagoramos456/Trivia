@@ -17,9 +17,10 @@ class RedirectButton extends Component {
   }
 
   render() {
-    const { history, name, testId } = this.props;
+    const { history, name, testId, className } = this.props;
     return (
       <button
+        className={ className }
         type="button"
         data-testid={ testId }
         onClick={ () => this.goToNextQuestion(history) }
@@ -36,6 +37,7 @@ RedirectButton.propTypes = {
   }).isRequired,
   name: PropTypes.string.isRequired,
   testId: PropTypes.string.isRequired,
+  className: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
   reset: PropTypes.func.isRequired,
   resetPlayer: PropTypes.func.isRequired,
