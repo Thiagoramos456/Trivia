@@ -15,7 +15,6 @@ class Ranking extends React.Component {
       ranking.sort((a, b) => b.score - a.score);
     }
     console.log(ranking);
-    // console.log('aaaaaaaaaaa', Object.entries(ranking));
     return ranking;
   }
 

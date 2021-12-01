@@ -39,7 +39,7 @@ class Feedback extends Component {
     const { history } = this.props;
     return (
       <div>
-        <Header />
+        <Header history={ history } />
         <h2 data-testid="feedback-text">
           {' '}
           {this.getFeedbackMessage()}

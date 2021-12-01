@@ -27,7 +27,7 @@ class Game extends Component {
   }
 
   async componentDidMount() {
-    this.getTokenFromStateOrLS();
+    await this.getTokenFromStateOrLS();
     this.startAnswerTimer();
     createInitialLocalStorage(this.props);
   }
@@ -60,13 +60,23 @@ class Game extends Component {
 
   getDifficultyValue({ difficulty }) {
     const POINTS_HARD = 3;
-    const POINTS_MEDIUM = 3;
-    const POINTS_EASY = 3;
+    const POINTS_MEDIUM = 2;
+    const POINTS_EASY = 1;
 
     if (difficulty === 'hard') return POINTS_HARD;
     if (difficulty === 'medium') return POINTS_MEDIUM;
     if (difficulty === 'easy') return POINTS_EASY;
   }
+
+  // Referência da função de randomização do array = https://stackoverflow.com/questions/53591691/sorting-an-array-in-random-order
+  doSort() {
+    const SORT_NUMBER = 0.5;
+    return SORT_NUMBER - Math.random();
+  }
+
+  // O número é aleatório porque o Math.random() retorna um valor entre 0 e 1.
+  // O resultado de 0,5 - Math.random() será um número entre -0,5 e 0,5.
+  // Se o resultado for > 0, a ordem será incrementada, se for < 0, será decrementada.
 
   enableNextQuestionButton() {
     this.setState({ showNextButton: true });
@@ -87,12 +97,12 @@ class Game extends Component {
     history.push('/feedback');
   }
 
-  rightAnswer({ results }) {
+  rightAnswer({ data }) {
     const { answerTimeSeconds } = this.state;
     const { login: { name, email: gravatarEmail } } = this.props;
     const { updatePlayerInfo, player } = this.props;
     const BASE_VALUE = 10;
-    const difficultyValue = this.getDifficultyValue(results[0]);
+    const difficultyValue = this.getDifficultyValue(data[0]);
     const score = BASE_VALUE + answerTimeSeconds * difficultyValue;
 
     const updatedPlayer = {
@@ -128,50 +138,48 @@ class Game extends Component {
   }
 
   render() {
-    const { isLoading, results } = this.props;
+    const { isLoading, data } = this.props;
     const { answerTimeSeconds, timeIsOver, showNextButton, qIndex } = this.state;
+    console.log(data);
     return (
       <>
         <Header />
-        { results && (
+        { data.length && (
           <div className="container mt-5">
+            <h1 data-testid="question-category">{data[qIndex].category}</h1>
             <h2
               data-testid="question-text"
               className="text-center"
-              dangerouslySetInnerHTML={ this.getCleanText(results[qIndex].question) }
+              dangerouslySetInnerHTML={ this.getCleanText(data[qIndex].question) }
             />
             <h3 className="my-4 text-center">
               {`Tempo restante: ${answerTimeSeconds} segundos`}
             </h3>
-            <ul className="list-group list-unstyled">
-              {results[qIndex].incorrect_answers.map((answer, index) => (
-                <li key={ index }>
+            <ol className="list-group list-unstyled">
+              {data[qIndex].shuffledAnswers.map(({ correct, id, name }) => (
+                <li key={ id }>
                   <Buttons
                     disabled={ timeIsOver }
-                    testId={ `wrong-answer-${index}` }
-                    text={ answer }
-                    onClick={ () => this.enableNextQuestionButton(this.props) }
-                    style={ { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
+                    testId={ correct ? 'correct-answer' : `wrong-answer-${id}` }
+                    text={ name }
+                    onClick={ correct ? () => this.rightAnswer(this.props)
+                      : () => this.enableNextQuestionButton(this.props) }
+                    style={ correct ? { border:
+                      timeIsOver && '3px solid rgb(6, 240, 15)' }
+                      : { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
                   />
                 </li>
               ))}
-              <li>
-                <Buttons
-                  disabled={ timeIsOver }
-                  testId="correct-answer"
-                  text={ results[qIndex].correct_answer }
-                  onClick={ () => this.rightAnswer(this.props) }
-                  style={ { border: timeIsOver && '3px solid rgb(6, 240, 15)' } }
-                />
-              </li>
-            </ul>
+            </ol>
             {showNextButton
               && <Buttons
                 testId="btn-next"
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
               />}
-            <h4 className="text-center mt-5" data-testid="question-category">{results[qIndex].category}</h4>
+            <h4 className="text-center mt-5" data-testid="question-category">
+              {data[qIndex].category}
+            </h4>
           </div>)}
         {isLoading && <Loading />}
       </>
@@ -180,7 +188,7 @@ class Game extends Component {
 }
 
 Game.propTypes = {
-  results: PropTypes.objectOf(PropTypes.object).isRequired,
+  data: PropTypes.objectOf(PropTypes.object).isRequired,
   fetchAPIAction: PropTypes.func.isRequired,
   token: PropTypes.string.isRequired,
   player: PropTypes.objectOf(PropTypes.object).isRequired,
@@ -194,7 +202,7 @@ const mapStateToProps = (state) => ({
   login: state.login,
   isLoading: state.gameData.isLoading,
   token: state.tokenReducer.token.token,
-  results: state.gameData.data.results,
+  data: state.gameData.data,
   player: state.gameData.player,
 });
 

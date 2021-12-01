@@ -4,17 +4,19 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 class Header extends Component {
+  checkPathname(history) {
+    if (history) {
+      const { location: { pathname } } = history;
+      if (pathname === '/feedback') return true;
+    }
+    return false;
+  }
+
   render() {
-    const { name, score, gravatarImage } = this.props;
+    const { name, score, gravatarImage, history } = this.props;
     return (
-      // d-flex justify-content-around align-items-center py-3
       <header
-        className="
-        container d-flex
-        justify-content-between
-        align-items-center
-        py-3
-        "
+        className="container d-flex justify-content-between align-items-center py-3"
       >
         <div className="d-flex flex-direction-row align-items-center">
           <img
@@ -23,9 +25,12 @@ class Header extends Component {
             src={ gravatarImage }
             alt="Player Gravatar"
           />
-          <span className="navbar-text" data-testid="header-player-name">{ name }</span>
+          <h2 className="navbar-text" data-testid="header-player-name">{ name }</h2>
         </div>
-        <span data-testid="navbar-text">{ `Score: ${score}` }</span>
+
+        { this.checkPathname(history) ? ''
+          : <h2 data-testid="navbar-text">{ `Score: ${score}` }</h2>}
+
         <Link className="navbar-brand text-danger h1" to="/">Sair</Link>
       </header>
     );
@@ -36,6 +41,7 @@ Header.propTypes = {
   gravatarImage: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   score: PropTypes.number.isRequired,
+  history: PropTypes.objectOf(PropTypes.object).isRequired,
 };
 
 const mapStateToProps = (state) => ({

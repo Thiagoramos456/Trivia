@@ -1,3 +1,5 @@
+import shuffle from '../../helpers/shuffleArray';
+
 export const LOGIN = 'LOGIN';
 export const FETCH_TOKEN = 'FETCH_TOKEN';
 export const FETCH_API_SUCCESS = 'FETCH_API_SUCCESS';
@@ -56,7 +58,21 @@ export const fetchAPI = (tokenKey) => async (dispatch) => {
   try {
     const questionsResponse = await fetch(`https://opentdb.com/api.php?amount=5&token=${tokenKey}`);
     const data = await questionsResponse.json();
-    dispatch(successAPIFetch(data));
+    const updatedData = data.results.map((question) => {
+      const allAnswers = [...question.incorrect_answers, question.correct_answer];
+      const shuffledAnswers = shuffle(allAnswers).map((answer, id) => {
+        if (answer === question.correct_answer) {
+          return { name: answer, id, correct: true };
+        }
+
+        return { name: answer, id, correct: false };
+      });
+
+      const updatedItem = { ...question, shuffledAnswers };
+      return updatedItem;
+    });
+    console.log(updatedData);
+    dispatch(successAPIFetch(updatedData));
   } catch (error) {
     dispatch(failedAPIFetch(error));
   }
