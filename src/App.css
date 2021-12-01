@@ -1,9 +1,9 @@
 .App {
-  text-align: center;
+ text-align: left;
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 20vmin;
   pointer-events: none;
 }
 
@@ -13,6 +13,35 @@
 
 .green-border {
   border: 1px solid green;
+}
+
+.form-login {
+  width: 30rem;
+  background: #282C35;
+  border: 1px solid gray;
+  color: #ffffff;
+  font-size: 1.2rem;
+  padding: 2rem;
+  font-weight: 500;
+}
+
+.bnt-login{
+  width: 11rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin: auto;
+}
+
+.form-position-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem; 
+}
+
+.input-login {
+  width: 26rem;
 }
 
 @media ( prefers-reduced-motion : no-preference ) {
