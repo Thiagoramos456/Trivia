@@ -29,7 +29,7 @@
   width: 11rem;
   height: 3rem;
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: 700;
   margin: auto;
 }
 
@@ -39,6 +39,7 @@
   align-items: center;
   margin-top: 2rem; 
 }
+
 
 .input-login {
   width: 26rem;
@@ -83,4 +84,41 @@
   40%, 60% {
     transform: translate3d(4px, 0, 0);
   }
+}
+
+.feedback-card {
+  width: 50rem;
+  margin: 10rem;
+  padding: 2rem 0;
+}
+
+.feedback-image {
+  width: 15%;
+  display: flex;
+  margin: auto;
+}
+
+.rank-div {
+  display: flex;
+  justify-content: center;
+  margin: auto;
+}
+
+.rank-ul {
+  width: 35rem;
+  color: #ffffff;
+  font-size: 1.2rem;
+  padding: 2rem;
+  font-weight: 500;
+}
+
+.btn-go-home {
+  width: 11rem;
+  height: 3rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
 }

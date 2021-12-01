@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import Header from '../components/Header';
 import RedirectButton from '../components/RedirectButton';
 import { createRankingInLocalStore } from '../helpers/createLocalStorage';
+import trophy from '../assets/trophy.png';
+import sadEmoji from '../assets/sadface.png';
 
 class Feedback extends Component {
   constructor() {
@@ -35,36 +37,58 @@ class Feedback extends Component {
     return assertions < MIN_ASSERTIONS ? 'Podia ser melhor...' : 'Mandou bem!';
   }
 
+  getFeedbackImage() {
+    const assertions = this.getAssertions();
+    const MIN_ASSERTIONS = 3;
+    return assertions < MIN_ASSERTIONS ? sadEmoji : trophy;
+  }
+
   render() {
     const { history } = this.props;
     return (
-      <div>
+      <>
         <Header history={ history } />
-        <h2 data-testid="feedback-text">
-          {' '}
-          {this.getFeedbackMessage()}
-          {' '}
-        </h2>
-        <h2 data-testid="feedback-total-score">{`${this.getScore()}`}</h2>
-        <h2
-          data-testid="feedback-total-question"
-        >
-          {`${this.getAssertions()}`}
-        </h2>
-        <RedirectButton
-          history={ history }
-          name="Ver Ranking"
-          testId="btn-ranking"
-          url="/ranking"
+        <img
+          src={ this.getFeedbackImage() }
+          alt="sad face emoji"
+          className="feedback-image"
         />
-        <RedirectButton
-          history={ history }
-          name="Jogar novamente"
-          testId="btn-play-again"
-          url="/"
-        />
+        <div className="card mx-auto mt-5 feedback-card">
+          <h2 data-testid="feedback-text" className="text-center">
+            {' '}
+            {this.getFeedbackMessage()}
+            {' '}
+          </h2>
+          <h2
+            className="text-center"
+            data-testid="feedback-total-score"
+          >
+            {`Pontuação: ${this.getScore()}`}
 
-      </div>
+          </h2>
+          <h2
+            className="text-center"
+            data-testid="feedback-total-question"
+          >
+            {`Acertos: ${this.getAssertions()}`}
+          </h2>
+          <RedirectButton
+            className="btn btn-success bnt-login mb-2"
+            history={ history }
+            name="Jogar novamente"
+            testId="btn-play-again"
+            url="/"
+          />
+          <RedirectButton
+            className="btn btn-info bnt-login"
+            history={ history }
+            name="Ver Ranking"
+            testId="btn-ranking"
+            url="/ranking"
+          />
+
+        </div>
+      </>
     );
   }
 }
