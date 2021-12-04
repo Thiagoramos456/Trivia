@@ -1,10 +1,15 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable max-len */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import { player as playerAction, fetchAPI } from '../redux/actions';
+import {
+  player as playerAction,
+  fetchAPI,
+  answerQuestion as answerQuestionAction,
+} from '../redux/actions';
 import createInitialLocalStorage from '../helpers/createLocalStorage';
 import Buttons from '../components/Buttons';
 import '../Game.css';
@@ -12,7 +17,6 @@ import '../Game.css';
 class Game extends Component {
   constructor() {
     super();
-
     this.state = {
       answerTimeSeconds: 30,
       timeIsOver: false,
@@ -25,6 +29,7 @@ class Game extends Component {
     this.stopAnswerTimer = this.stopAnswerTimer.bind(this);
     this.goToNextQuestion = this.goToNextQuestion.bind(this);
     this.enableNextQuestionButton = this.enableNextQuestionButton.bind(this);
+    this.getAnswerClassName = this.getAnswerClassName.bind(this);
   }
 
   async componentDidMount() {
@@ -39,6 +44,7 @@ class Game extends Component {
 
     if (answerTimeSeconds === TIME_LIMIT) {
       this.stopAnswerTimer();
+      this.wrongAnswer();
     }
   }
 
@@ -69,38 +75,28 @@ class Game extends Component {
     if (difficulty === 'easy') return POINTS_EASY;
   }
 
-  // Referência da função de randomização do array = https://stackoverflow.com/questions/53591691/sorting-an-array-in-random-order
-  doSort() {
-    const SORT_NUMBER = 0.5;
-    return SORT_NUMBER - Math.random();
-  }
-
-  // O número é aleatório porque o Math.random() retorna um valor entre 0 e 1.
-  // O resultado de 0,5 - Math.random() será um número entre -0,5 e 0,5.
-  // Se o resultado for > 0, a ordem será incrementada, se for < 0, será decrementada.
-
-  enableNextQuestionButton() {
-    this.setState({ showNextButton: true });
-    this.setState({ timeIsOver: true });
-  }
-
-  goToNextQuestion() {
-    const { qIndex } = this.state;
-    const { history } = this.props;
-    const MAX_QUESTION_NUMBER = 4;
-    if (qIndex < MAX_QUESTION_NUMBER) {
-      return this.setState((prevState) => ({
-        qIndex: prevState.qIndex + 1,
-        answerTimeSeconds: 30,
-        timeIsOver: false,
-      }));
+  getAnswerClassName(answered, isCorrect) {
+    if (answered && isCorrect) {
+      return 'fas fa-check-circle bg-green qAnswer';
+    } if (answered && isCorrect === false) {
+      return 'fas fa-times-circle bg-red qAnswer';
     }
-    history.push('/feedback');
+    return 'far fa-circle qAnswer';
+  }
+
+  wrongAnswer() {
+    const { qIndex } = this.state;
+    const { answerQuestion } = this.props;
+    this.enableNextQuestionButton();
+    answerQuestion({ qIndex, isCorrect: false });
   }
 
   rightAnswer({ data }) {
-    const { answerTimeSeconds } = this.state;
-    const { login: { name, email: gravatarEmail } } = this.props;
+    const { answerTimeSeconds, qIndex } = this.state;
+    const {
+      login: { name, email: gravatarEmail },
+      answerQuestion,
+    } = this.props;
     const { updatePlayerInfo, player } = this.props;
     const BASE_VALUE = 10;
     const difficultyValue = this.getDifficultyValue(data[0]);
@@ -119,6 +115,7 @@ class Game extends Component {
     updatePlayerInfo(updatedPlayer);
     this.enableNextQuestionButton();
     this.setState({ timeIsOver: true });
+    answerQuestion({ qIndex, isCorrect: true });
   }
 
   startAnswerTimer() {
@@ -138,14 +135,32 @@ class Game extends Component {
     });
   }
 
+  goToNextQuestion() {
+    const { qIndex } = this.state;
+    const { history } = this.props;
+    const MAX_QUESTION_NUMBER = 4;
+    if (qIndex < MAX_QUESTION_NUMBER) {
+      return this.setState((prevState) => ({
+        qIndex: prevState.qIndex + 1,
+        answerTimeSeconds: 30,
+        timeIsOver: false,
+      }));
+    }
+    history.push('/feedback');
+  }
+
+  enableNextQuestionButton() {
+    this.setState({ showNextButton: true });
+    this.setState({ timeIsOver: true });
+  }
+
   render() {
-    const { isLoading, data } = this.props;
+    const { isLoading, data, questionsProgress } = this.props;
     const { answerTimeSeconds, timeIsOver, showNextButton, qIndex } = this.state;
-    console.log(data);
     return (
       <>
         <Header />
-        { data.length && (
+        {data.length && (
           <div className="container mt-5">
             <h1 data-testid="question-category">{data[qIndex].category}</h1>
             <h2
@@ -158,30 +173,39 @@ class Game extends Component {
             </h3>
             <ol className="list-group list-unstyled">
               {data[qIndex].shuffledAnswers.map(({ correct, id, name }) => (
-                <li key={ id } className={ timeIsOver ? 'blink_me' : '' }>
+                <li key={ id } className={ timeIsOver ? 'animated pulse infinite' : '' }>
                   <Buttons
                     disabled={ timeIsOver }
                     testId={ correct ? 'correct-answer' : `wrong-answer-${id}` }
                     text={ name }
-                    onClick={ correct ? () => this.rightAnswer(this.props)
-                      : () => this.enableNextQuestionButton(this.props) }
-                    style={ correct ? { border:
-                      timeIsOver && '3px solid rgb(6, 240, 15)' }
-                      : { border: timeIsOver && '3px solid rgb(255, 0, 0)' } }
+                    onClick={
+                      correct
+                        ? () => this.rightAnswer(this.props)
+                        : () => this.wrongAnswer()
+                    }
+                    style={
+                      correct
+                        ? { border: timeIsOver && '3px solid rgb(6, 240, 15)' }
+                        : { border: timeIsOver && '3px solid rgb(255, 0, 0)' }
+                    }
                   />
                 </li>
               ))}
             </ol>
-            {showNextButton
-              && <Buttons
+            {showNextButton && (
+              <Buttons
                 testId="btn-next"
                 text="Próxima"
                 onClick={ this.goToNextQuestion }
-              />}
-            <h4 className="text-center mt-5" data-testid="question-category">
-              {data[qIndex].category}
-            </h4>
-          </div>)}
+              />
+            )}
+            <div className="d-flex justify-content-center">
+              {questionsProgress.map(({ isCorrect, answered, question }) => (
+                <i key={ question } className={ this.getAnswerClassName(answered, isCorrect) } />
+              ))}
+            </div>
+          </div>
+        )}
         {isLoading && <Loading />}
       </>
     );
@@ -205,11 +229,13 @@ const mapStateToProps = (state) => ({
   token: state.tokenReducer.token.token,
   data: state.gameData.data,
   player: state.gameData.player,
+  questionsProgress: state.gameData.questionsProgress,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchAPIAction: (token) => dispatch(fetchAPI(token)),
   updatePlayerInfo: (player) => dispatch(playerAction(player)),
+  answerQuestion: (qIndex) => dispatch(answerQuestionAction(qIndex)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

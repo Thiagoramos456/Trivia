@@ -45,6 +45,19 @@
   width: 26rem;
 }
 
+.qAnswer {
+  font-size: 2rem;
+  margin: 0.8rem 0.7rem;
+}
+
+.bg-green {
+  color: green;
+}
+
+.bg-red {
+  color: red;
+}
+
 @media ( prefers-reduced-motion : no-preference ) {
 
   .App-logo {

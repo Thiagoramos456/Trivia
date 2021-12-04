@@ -8,6 +8,7 @@ export const LOADING = 'LOADING';
 export const PLAYER = 'PLAYER';
 export const RESET_STATE = 'RESET_STATE';
 export const RESET_PLAYER = 'RESET_PLAYER';
+export const ANSWER_QUESTION = 'ANSWER_QUESTION';
 
 export const resetState = () => ({
   type: RESET_STATE,
@@ -47,6 +48,11 @@ export const player = (payload) => ({
   payload,
 });
 
+export const answerQuestion = (payload) => ({
+  type: ANSWER_QUESTION,
+  payload,
+});
+
 export const fetchToken = () => async (dispatch) => {
   const response = await fetch('https://opentdb.com/api_token.php?command=request');
   const data = await response.json();
@@ -71,7 +77,6 @@ export const fetchAPI = (tokenKey) => async (dispatch) => {
       const updatedItem = { ...question, shuffledAnswers };
       return updatedItem;
     });
-    console.log(updatedData);
     dispatch(successAPIFetch(updatedData));
   } catch (error) {
     dispatch(failedAPIFetch(error));
