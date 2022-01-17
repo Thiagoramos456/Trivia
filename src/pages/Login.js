@@ -85,6 +85,7 @@ class Login extends Component {
               >
                 Login
               </button>
+              {/* Remoção temporária do botão de configuração */}
               {/* <button
                 className="btn btn-danger bnt-login"
                 type="button"
