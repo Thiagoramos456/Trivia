@@ -85,14 +85,14 @@ class Login extends Component {
               >
                 Login
               </button>
-              <button
+              {/* <button
                 className="btn btn-danger bnt-login"
                 type="button"
                 data-testid="btn-settings"
                 onClick={ this.redirectToConfig }
               >
                 Configuração
-              </button>
+              </button> */}
             </div>
           </form>
         </header>
