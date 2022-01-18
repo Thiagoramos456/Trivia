@@ -4,7 +4,7 @@ Aplicação/website Jogo de Trivia (perguntas e respostas).
 
 ## Especificações Técnicas
 
- desenvolvido com **React, Redux e Bootstrap**, utilizando as APIs [Gravatar](https://br.gravatar.com/) e [Open Trivia](https://opentdb.com/api_config.php).
+Desenvolvido com **React, Redux e Bootstrap**, utilizando as APIs [Gravatar](https://br.gravatar.com/) e [Open Trivia](https://opentdb.com/api_config.php).
 O desenvolvimento desse projeto exercita a criação de formulários, gerenciamento de estados no Redux, requisições API e manipulação de localStorage.
 
 ### [Clique aqui para acessar a aplicação](https://webtrivia.vercel.app/).
